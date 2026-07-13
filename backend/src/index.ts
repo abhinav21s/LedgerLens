@@ -1,6 +1,8 @@
+/// <reference types="node" />
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import process from 'process'
 
 const app = new Hono()
 
