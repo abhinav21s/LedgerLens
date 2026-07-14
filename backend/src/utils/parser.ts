@@ -124,9 +124,15 @@ export function parseTransactionText(text: string): ParsedTransaction {
   matches.forEach((m) => {
     cleanText = cleanText.replace(m[0], "");
   });
-  // Strip keywords and symbols
-  cleanText = cleanText.replace(/debited|credited|debit|credit|Dr|Cr|balance|bal/gi, "");
-  description = cleanText.replace(/[₹$,\-]/g, "").replace(/\s+/g, " ").trim();
+  // Strip keywords, symbols, and common parsing artifacts
+  cleanText = cleanText.replace(/debited|credited|debit|credit|Dr|Cr|balance|bal|balanceafter|balafter/gi, "");
+  cleanText = cleanText.replace(/[₹$,\-→>:]/g, "");
+  cleanText = cleanText.replace(/\s+/g, " ").trim();
+  
+  // Remove common field labels and artifacts
+  cleanText = cleanText.replace(/^(to|from|transfer|payment|merchant|description)\s*/gi, "");
+  
+  description = cleanText;
 
   if (!description) {
     description = "Transaction";

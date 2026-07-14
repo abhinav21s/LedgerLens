@@ -41,9 +41,9 @@ export default function DashboardPage() {
   const [fetchingTransactions, setFetchingTransactions] = useState(false);
 
   const sampleTexts = [
-    "11 Dec 2025 Transfer to John ₹1,250.00 debited Balance ₹5,000.00",
-    "12/11/2025 Groceries Store ₹2,999.00 Dr Balance ₹2,001.00",
-    "2025-12-10 Salary -420.00 Balance 12458.73",
+    { label: "Simple format", text: "11 Dec 2025 Transfer to John ₹1,250.00 debited Balance ₹5,000.00" },
+    { label: "Slash-date format", text: "12/11/2025 Groceries Store ₹2,999.00 Dr Balance ₹2,001.00" },
+    { label: "Messy/no-punctuation format", text: "2025-12-10 Salary -420.00 Balance 12458.73" },
   ];
 
   const fetchTransactions = useCallback(async (cursorId?: string) => {
@@ -180,7 +180,7 @@ export default function DashboardPage() {
       </nav>
 
       {/* Main content grid */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-6 space-y-8">
         
         {/* KPI Cards / Metrics Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -217,14 +217,17 @@ export default function DashboardPage() {
           </Card>
         </div>
 
+        {/* Visual Section Divider */}
+        <div className="border-t border-border"></div>
+
         {/* Dashboard Panels */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           
-          {/* Parser Engine Console */}
+          {/* Parser Engine Console - Primary Element with Visual Emphasis */}
           <div className="lg:col-span-2 space-y-5">
-            <Card className="border-border bg-card shadow-lg">
+            <Card className="border-primary/40 bg-card shadow-xl ring-1 ring-primary/10">
               <CardHeader className="flex flex-row items-center space-x-3 pb-4">
-                <FileText className="h-5 w-5 text-muted-foreground" strokeWidth={1.5} />
+                <FileText className="h-5 w-5 text-primary" strokeWidth={2} />
                 <div>
                   <CardTitle className="text-lg font-heading font-semibold text-foreground">Parser Console</CardTitle>
                   <CardDescription className="text-muted-foreground text-xs mt-1">
@@ -239,7 +242,7 @@ export default function DashboardPage() {
                       placeholder="Paste your statement text block here..."
                       value={text}
                       onChange={(e) => setText(e.target.value)}
-                      className="min-h-36 border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-ring font-mono text-sm"
+                      className="min-h-36 border-2 border-border bg-secondary/30 text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary font-mono text-sm transition-all"
                     />
                   </div>
 
@@ -282,15 +285,15 @@ export default function DashboardPage() {
             </Card>
           </div>
 
-          {/* Test Presets Console */}
+          {/* Test Presets Console - Secondary Helper */}
           <div>
             <Card className="border-border bg-card shadow-lg h-full">
               <CardHeader className="flex flex-row items-center space-x-3 pb-4">
                 <Database className="h-5 w-5 text-muted-foreground" strokeWidth={1.5} />
                 <div>
-                  <CardTitle className="text-lg font-heading font-semibold text-foreground">Statement Presets</CardTitle>
+                  <CardTitle className="text-lg font-heading font-semibold text-foreground">Try a Sample Statement</CardTitle>
                   <CardDescription className="text-muted-foreground text-xs mt-1">
-                    Quickly test our parser engine using standard multi-format bank statement layouts.
+                    Click any example to auto-fill the parser console and test instantly.
                   </CardDescription>
                 </div>
               </CardHeader>
@@ -299,19 +302,26 @@ export default function DashboardPage() {
                   <button
                     key={idx}
                     onClick={() => {
-                      setText(sample);
+                      setText(sample.text);
                       setFeedback(null);
                     }}
-                    className="w-full text-left p-3 rounded-lg border border-border bg-background hover:bg-secondary hover:border-muted transition-all duration-300 text-xs font-mono text-muted-foreground hover:text-foreground group"
+                    className="w-full text-left px-4 py-3 rounded-lg border-2 border-border bg-background hover:bg-secondary hover:border-primary/40 transition-all duration-300 group"
                   >
-                    <span className="block font-semibold text-primary mb-1.5 group-hover:text-primary/90 transition-colors">Format {idx + 1}:</span>
-                    <span className="line-clamp-2">{sample}</span>
+                    <span className="block font-semibold text-sm text-foreground mb-1 group-hover:text-primary transition-colors">
+                      {sample.label}
+                    </span>
+                    <span className="text-xs font-mono text-muted-foreground line-clamp-2 group-hover:text-foreground/80 transition-colors">
+                      {sample.text}
+                    </span>
                   </button>
                 ))}
               </CardContent>
             </Card>
           </div>
         </div>
+
+        {/* Visual Section Divider */}
+        <div className="border-t border-border"></div>
 
         {/* Ledger Transaction History Table */}
         <Card className="border-border bg-card shadow-lg">
