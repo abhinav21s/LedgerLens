@@ -6,7 +6,8 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "seed": "tsx src/seed.ts"
+    "seed": "tsx src/seed.ts",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.mjs --runInBand --forceExit"
   },
   "dependencies": {
     "@better-auth/prisma-adapter": "^1.6.23",
@@ -18,9 +19,12 @@
     "pg": "^8.22.0"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "@types/node": "^20.14.9",
     "@types/pg": "^8.20.0",
+    "jest": "^30.4.2",
     "prisma": "^7.8.0",
+    "ts-jest": "^29.4.11",
     "tsx": "^4.16.0",
     "typescript": "^5.5.2"
   }

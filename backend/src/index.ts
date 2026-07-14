@@ -1,4 +1,5 @@
 /// <reference types="node" />
+import "dotenv/config";
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
@@ -221,10 +222,13 @@ app.on(["POST", "GET"], "/api/auth/*", (c) => {
 });
 
 const port = Number(process.env.PORT) || 4000;
-console.log(`Server is running on port ${port}`);
 
-serve({
-  fetch: app.fetch,
-  port,
-});
+if (process.env.NODE_ENV !== "test") {
+  console.log(`Server is running on port ${port}`);
+  serve({
+    fetch: app.fetch,
+    port,
+  });
+}
+
 export default app;
