@@ -4,8 +4,9 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import process from "process";
 import { auth } from "./auth";
+import { authMiddleware, AuthVariables } from "./middleware/auth";
 
-const app = new Hono();
+const app = new Hono<{ Variables: AuthVariables }>();
 
 const allowedOrigin = process.env.ALLOWED_ORIGIN || "http://localhost:3000";
 
@@ -60,6 +61,20 @@ app.post("/api/auth/login", async (c) => {
   } catch (err: any) {
     return c.json({ error: err.message || "Login failed" }, 400);
   }
+});
+
+// Protected routes
+app.use("/api/transactions/*", authMiddleware);
+
+app.get("/api/transactions/test", (c) => {
+  const userId = c.get("userId");
+  const orgId = c.get("orgId");
+  return c.json({
+    status: "success",
+    message: "Authenticated",
+    userId,
+    orgId,
+  });
 });
 
 // Catch-all for Better Auth endpoints (get-session, sign-out, organization APIs etc.)
