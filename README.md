@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Vessify (LedgerLens) — Monorepo
 
-## Getting Started
+Vessify is a multi-tenant bank statement parser and transaction ledger web application built using Hono (Backend) and Next.js (Frontend). It allows users to parse messy bank statement text and record them in an organization-scoped secure ledger.
 
-First, run the development server:
+---
 
+## 🛠️ Stack Overview
+- **Backend:** Hono + TypeScript + Prisma ORM (v7) + PostgreSQL (Supabase)
+- **Frontend:** Next.js 15 (App Router) + Tailwind CSS + shadcn/ui
+- **Authentication:** Better Auth (Backend) + Auth.js (Frontend)
+
+---
+
+## 🚀 Running the Project
+
+### 1. Backend Setup
+Navigate to the `backend/` directory:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd backend
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Configure your environment variables in `backend/.env` (see the Environment Variables section below).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Run the migrations to sync the database schema:
+```bash
+npx prisma migrate dev
+```
 
-## Learn More
+Seed the database with two default test users and organizations:
+```bash
+npm run seed
+```
 
-To learn more about Next.js, take a look at the following resources:
+Start the development server (runs on `http://localhost:4000`):
+```bash
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 2. Frontend Setup
+Navigate to the `frontend/` directory:
+```bash
+cd ../frontend
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Install dependencies:
+```bash
+npm install
+```
 
-## Deploy on Vercel
+Configure your environment variables in `frontend/.env` (see the Environment Variables section below).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Start the development server (runs on `http://localhost:3000`):
+```bash
+npm run dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🔑 Environment Variables Configuration
+
+Create a `.env` file in the root of the `/backend` folder:
+```env
+# Backend Server Config
+PORT=4000
+ALLOWED_ORIGIN="http://localhost:3000"
+
+# PostgreSQL Connection (Supabase / Neon)
+DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@YOUR_HOST:5432/postgres?sslmode=require"
+
+# Better Auth Configuration
+BETTER_AUTH_SECRET="a_very_secure_random_32_character_secret_key"
+BETTER_AUTH_URL="http://localhost:4000"
+```
+
+Create a `.env` file in the root of the `/frontend` folder:
+```env
+# Frontend API endpoint config
+NEXT_PUBLIC_API_URL="http://localhost:4000"
+```
+
+---
+
+## 👥 Test User Credentials
+The database seeding script creates two test users in separate, isolated organizations:
+
+| User | Email | Password | Organization Created | Role |
+| :--- | :--- | :--- | :--- | :--- |
+| **Alice** | `user.a@example.com` | `password123` | *User Alice's Org* | Owner |
+| **Bob** | `user.b@example.com` | `password123` | *User Bob's Org* | Owner |
+
+*You can run `npm run seed` in the `/backend` folder at any time to reset and re-seed these test users.*
+
+---
+
+## 🛡️ Multi-Tenant Isolation & Better Auth Integration
+
+Our approach to multi-tenant isolation and scalability revolves around the **Better Auth Organization Plugin** and **Prisma database hooks**:
+
+1. **Auto-Provisioning Workspaces:** On user registration (`user.create.after` hook), a default personal organization is automatically provisioned for the user, and they are linked as the owner in the `Membership` join table.
+2. **Session-Scoped Multi-Tenancy:** Upon login/session creation (`session.create.before` hook), we resolve the user's primary organization membership and inject it into the session data as `activeOrganizationId`. This ensures the active organization context is securely carried inside the authenticated session cookie.
+3. **Strict Query Scoping:** Downstream routes use the session context to fetch the `activeOrganizationId` and strictly scope all transaction queries by it. This ensures absolute data isolation where User A cannot read or write data belonging to Organization B, even if they guess IDs or attempt cross-tenant access.
+
+---
