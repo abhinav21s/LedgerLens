@@ -1,6 +1,6 @@
-# Vessify (LedgerLens) — Monorepo
+# LedgerLens — Monorepo
 
-Vessify is a multi-tenant bank statement parser and transaction ledger web application built using Hono (Backend) and Next.js (Frontend). It allows users to parse messy bank statement text and record them in an organization-scoped secure ledger.
+LedgerLens is a multi-tenant bank statement parser and transaction ledger web application built using Hono (Backend) and Next.js (Frontend). It allows users to parse messy bank statement text and record them in an organization-scoped secure ledger.
 
 ---
 
@@ -36,10 +36,17 @@ Seed the database with two default test users and organizations:
 npm run seed
 ```
 
+Run integration tests (verifies auth, parser engine, tenant isolation, and pagination):
+```bash
+npm run test
+```
+
 Start the development server (runs on `http://localhost:4000`):
 ```bash
 npm run dev
 ```
+
+---
 
 ### 2. Frontend Setup
 Navigate to the `frontend/` directory:
@@ -63,6 +70,7 @@ npm run dev
 
 ## 🔑 Environment Variables Configuration
 
+### Backend Environment Variables (`backend/.env`)
 Create a `.env` file in the root of the `/backend` folder:
 ```env
 # Backend Server Config
@@ -77,10 +85,15 @@ BETTER_AUTH_SECRET="a_very_secure_random_32_character_secret_key"
 BETTER_AUTH_URL="http://localhost:4000"
 ```
 
+### Frontend Environment Variables (`frontend/.env`)
 Create a `.env` file in the root of the `/frontend` folder:
 ```env
 # Frontend API endpoint config
 NEXT_PUBLIC_API_URL="http://localhost:4000"
+
+# Auth.js Configuration
+AUTH_SECRET="a_very_secure_nextauth_secret_key_32_chars"
+AUTH_URL="http://localhost:3000"
 ```
 
 ---
@@ -99,10 +112,8 @@ The database seeding script creates two test users in separate, isolated organiz
 
 ## 🛡️ Multi-Tenant Isolation & Better Auth Integration
 
-Our approach to multi-tenant isolation and scalability revolves around the **Better Auth Organization Plugin** and **Prisma database hooks**:
+Our approach to multi-tenant isolation and scalability revolves around the **Better Auth Organization Plugin**, **Prisma database hooks**, and a **self-healing middleware fallback**:
 
 1. **Auto-Provisioning Workspaces:** On user registration (`user.create.after` hook), a default personal organization is automatically provisioned for the user, and they are linked as the owner in the `Membership` join table.
 2. **Session-Scoped Multi-Tenancy:** Upon login/session creation (`session.create.before` hook), we resolve the user's primary organization membership and inject it into the session data as `activeOrganizationId`. This ensures the active organization context is securely carried inside the authenticated session cookie.
-3. **Strict Query Scoping:** Downstream routes use the session context to fetch the `activeOrganizationId` and strictly scope all transaction queries by it. This ensures absolute data isolation where User A cannot read or write data belonging to Organization B, even if they guess IDs or attempt cross-tenant access.
-
----
+3. **Self-Healing Fallback & Strict Query Scoping:** Downstream Hono routes use our authentication middleware to extract `activeOrganizationId`. If the ID is missing (e.g. during a newly registered session before hooks fully sync), the middleware automatically queries the user's membership database records, self-heals the session row, and scopes all queries securely, enforcing absolute isolation.
