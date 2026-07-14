@@ -5,6 +5,8 @@ import { cors } from "hono/cors";
 import process from "process";
 import { auth } from "./auth";
 import { authMiddleware, AuthVariables } from "./middleware/auth";
+import { prisma } from "./db";
+import { parseTransactionText } from "./utils/parser";
 
 const app = new Hono<{ Variables: AuthVariables }>();
 
@@ -75,6 +77,51 @@ app.get("/api/transactions/test", (c) => {
     userId,
     orgId,
   });
+});
+
+app.post("/api/transactions/extract", async (c) => {
+  try {
+    const userId = c.get("userId");
+    const orgId = c.get("orgId");
+
+    const body = await c.req.json();
+    const { text } = body;
+
+    if (!text || typeof text !== "string") {
+      return c.json({ error: "Missing or invalid 'text' field in request body" }, 400);
+    }
+
+    const parsed = parseTransactionText(text);
+
+    // Save to the database, scoped to orgId and userId
+    const transaction = await prisma.transaction.create({
+      data: {
+        organizationId: orgId,
+        userId: userId,
+        date: parsed.date,
+        description: parsed.description,
+        amount: parsed.amount,
+        balanceAfter: parsed.balanceAfter,
+        rawText: text,
+        confidence: parsed.confidence,
+      },
+    });
+
+    return c.json({
+      status: "success",
+      data: {
+        id: transaction.id,
+        date: transaction.date,
+        description: transaction.description,
+        amount: Number(transaction.amount),
+        balanceAfter: Number(transaction.balanceAfter),
+        confidence: transaction.confidence,
+        rawText: transaction.rawText,
+      },
+    });
+  } catch (err: any) {
+    return c.json({ error: err.message || "Failed to extract transaction" }, 500);
+  }
 });
 
 // Catch-all for Better Auth endpoints (get-session, sign-out, organization APIs etc.)
