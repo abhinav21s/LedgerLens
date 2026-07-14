@@ -124,6 +124,71 @@ app.post("/api/transactions/extract", async (c) => {
   }
 });
 
+app.get("/api/transactions", async (c) => {
+  try {
+    const orgId = c.get("orgId");
+
+    // Parse query params
+    const cursor = c.req.query("cursor");
+    const limitParam = parseInt(c.req.query("limit") || "20");
+    const limit = isNaN(limitParam) ? 20 : limitParam;
+
+    /*
+     * WHY CURSOR-BASED PAGINATION?
+     * Offset-based pagination (using LIMIT and OFFSET) degrades on large tables because the database must scan
+     * and discard OFFSET number of rows before returning results, resulting in O(N) performance.
+     * Additionally, if new rows are concurrently inserted or deleted while a user is paginating,
+     * offset pagination can cause rows to be skipped or duplicated across pages.
+     * Cursor-based pagination uses a stable marker (the cursor, which is typically the unique row ID)
+     * and filters rows relative to this marker (e.g., WHERE id < cursor), which utilizes indexes
+     * for constant time lookup (O(1)) and remains completely stable regardless of concurrent insertions.
+     */
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        organizationId: orgId,
+      },
+      take: limit + 1,
+      orderBy: {
+        id: "desc", // Latest transactions first
+      },
+      ...(cursor
+        ? {
+            skip: 1, // Skip the cursor element itself
+            cursor: {
+              id: cursor,
+            },
+          }
+        : {}),
+    });
+
+    let nextCursor: string | null = null;
+    let data = transactions;
+
+    if (transactions.length > limit) {
+      // We have a next page
+      const nextItem = transactions[limit];
+      nextCursor = nextItem.id;
+      // Exclude the extra item from the result
+      data = transactions.slice(0, limit);
+    }
+
+    const formattedData = data.map((t) => ({
+      ...t,
+      amount: Number(t.amount),
+      balanceAfter: Number(t.balanceAfter),
+    }));
+
+    return c.json({
+      status: "success",
+      data: formattedData,
+      nextCursor,
+    });
+  } catch (err: any) {
+    return c.json({ error: err.message || "Failed to fetch transactions" }, 500);
+  }
+});
+
+
 // Catch-all for Better Auth endpoints (get-session, sign-out, organization APIs etc.)
 app.on(["POST", "GET"], "/api/auth/*", (c) => {
   return auth.handler(c.req.raw);
