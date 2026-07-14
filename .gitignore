@@ -35,3 +35,4 @@ Thumbs.db
 # Prompt files / guidelines
 vessify_build_prompt .md
 vessify_build_prompt.md
+DEPLOYMENT.md
