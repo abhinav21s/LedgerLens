@@ -65,72 +65,68 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#070a13] p-4 relative overflow-hidden font-sans">
-      {/* Background ambient glow shapes */}
-      <div className="absolute top-1/4 left-1/4 h-80 w-80 rounded-full bg-blue-500/5 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 h-80 w-80 rounded-full bg-violet-500/5 blur-[120px] pointer-events-none" />
-
+    <div className="flex min-h-screen items-center justify-center bg-background p-4 relative overflow-hidden font-sans">
       {/* Floating Back Button */}
       <div className="absolute top-6 left-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors">
+        <Link href="/" className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="h-4 w-4" />
           Back to Home
         </Link>
       </div>
 
-      <Card className="relative w-full max-w-md border-slate-900 bg-slate-950/80 backdrop-blur-md shadow-2xl p-2">
-        <CardHeader className="space-y-2 text-center pb-4">
-          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-tr from-violet-600 to-indigo-600 text-white font-bold shadow-lg shadow-violet-500/20 mb-2">
+      <Card className="relative w-full max-w-md border-border bg-card shadow-2xl p-2">
+        <CardHeader className="space-y-3 text-center pb-6">
+          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold mb-2">
             LL
           </div>
-          <CardTitle className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+          <CardTitle className="text-2xl font-heading font-bold tracking-tight text-foreground">
             Create Account
           </CardTitle>
-          <CardDescription className="text-slate-400 text-xs">
+          <CardDescription className="text-muted-foreground text-sm">
             Sign up to get your own secure transaction ledger workspace
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             {error && (
-              <div className="rounded-lg bg-red-500/5 p-3 text-xs text-red-400 border border-red-500/20 flex items-center gap-2">
+              <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20 flex items-center gap-2">
                 <AlertCircle className="h-4 w-4 shrink-0" />
                 <span>{error}</span>
               </div>
             )}
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-slate-300 text-xs font-semibold uppercase tracking-wider">Full Name</Label>
+              <Label htmlFor="name" className="text-foreground text-sm font-medium">Full Name</Label>
               <Input
                 id="name"
                 type="text"
                 placeholder="Alice Smith"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="border-slate-900 bg-slate-950/50 text-slate-100 placeholder:text-slate-700 focus-visible:ring-violet-500"
+                className="border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-ring"
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-slate-300 text-xs font-semibold uppercase tracking-wider">Email Address</Label>
+              <Label htmlFor="email" className="text-foreground text-sm font-medium">Email Address</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="border-slate-900 bg-slate-950/50 text-slate-100 placeholder:text-slate-700 focus-visible:ring-violet-500"
+                className="border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-ring"
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-slate-300 text-xs font-semibold uppercase tracking-wider">Password</Label>
+              <Label htmlFor="password" className="text-foreground text-sm font-medium">Password</Label>
               <Input
                 id="password"
                 type="password"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="border-slate-900 bg-slate-950/50 text-slate-100 placeholder:text-slate-700 focus-visible:ring-violet-500"
+                className="border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-ring"
                 required
               />
             </div>
@@ -138,21 +134,21 @@ export default function RegisterPage() {
           <CardFooter className="flex flex-col space-y-4 pt-2">
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold py-5 shadow-lg shadow-violet-500/15 transition-all duration-300"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-5 transition-all duration-300"
               disabled={loading}
             >
               {loading ? (
                 <div className="flex items-center gap-2 justify-center">
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
                   Creating Workspace...
                 </div>
               ) : (
                 "Sign Up"
               )}
             </Button>
-            <div className="text-center text-xs text-slate-500">
+            <div className="text-center text-sm text-muted-foreground">
               Already have an account?{" "}
-              <Link href="/login" className="font-semibold text-violet-400 hover:text-violet-300 transition-colors">
+              <Link href="/login" className="font-semibold text-primary hover:text-primary/90 transition-colors">
                 Login
               </Link>
             </div>

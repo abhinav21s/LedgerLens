@@ -13,8 +13,6 @@ import {
   History, 
   LogOut, 
   Database, 
-  TrendingUp, 
-  Sparkles, 
   ArrowRight, 
   CheckCircle2, 
   AlertCircle 
@@ -143,9 +141,9 @@ export default function DashboardPage() {
 
   if (status === "loading") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#070a13] text-slate-400">
+      <div className="flex min-h-screen items-center justify-center bg-background text-muted-foreground">
         <div className="flex flex-col items-center space-y-4">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-violet-500 border-t-transparent"></div>
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
           <p className="text-sm font-medium tracking-wide">Syncing secure ledger session...</p>
         </div>
       </div>
@@ -153,34 +151,27 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#070a13] text-slate-100 flex flex-col font-sans relative overflow-hidden">
-      {/* Background ambient glow shapes */}
-      <div className="absolute top-0 right-0 h-[500px] w-[500px] rounded-full bg-violet-600/5 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 h-[500px] w-[500px] rounded-full bg-blue-600/5 blur-[120px] pointer-events-none" />
-
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans relative overflow-hidden">
       {/* Navigation bar */}
-      <nav className="border-b border-slate-900 bg-[#070a13]/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
+      <nav className="border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50 px-6 py-3.5 flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-tr from-violet-600 to-indigo-600 text-white font-bold shadow-lg shadow-violet-500/20">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
             LL
           </div>
-          <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+          <span className="text-xl font-heading font-bold tracking-tight text-foreground">
             LedgerLens
-          </span>
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-400 border border-violet-500/20 font-medium">
-            Multi-Tenant
           </span>
         </div>
         <div className="flex items-center space-x-4">
-          <div className="text-right hidden sm:block border-r border-slate-800 pr-4 mr-2">
-            <p className="text-sm font-semibold text-slate-200">{session?.user?.name}</p>
-            <p className="text-xs text-slate-500 font-mono">{(session as any).orgId ? `Org ID: ${(session as any).orgId.substring(0, 8)}...` : 'Personal'}</p>
+          <div className="text-right hidden sm:block border-r border-border pr-4 mr-2">
+            <p className="text-sm font-medium text-foreground">{session?.user?.name}</p>
+            <p className="text-xs text-muted-foreground font-mono">{(session as any).orgId ? `Org ${(session as any).orgId.substring(0, 8)}...` : 'Personal'}</p>
           </div>
           <Button
             onClick={handleSignOut}
             variant="outline"
             size="sm"
-            className="border-slate-800 bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2"
+            className="border-border bg-card text-foreground hover:bg-secondary hover:text-foreground flex items-center gap-2"
           >
             <LogOut className="h-4 w-4" />
             Sign Out
@@ -189,63 +180,54 @@ export default function DashboardPage() {
       </nav>
 
       {/* Main content grid */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-6 space-y-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
         
         {/* KPI Cards / Metrics Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="border-slate-900 bg-slate-950/40 backdrop-blur shadow-xl relative overflow-hidden group">
-            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-violet-500 to-indigo-500" />
-            <CardContent className="pt-6 flex items-center justify-between">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <Card className="border-border bg-card shadow-lg relative overflow-hidden group">
+            <div className="absolute bottom-0 left-0 w-12 h-0.5 bg-primary" />
+            <CardContent className="pt-5 pb-4 flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Ledger Count</p>
-                <p className="text-3xl font-extrabold text-white">{transactions.length}</p>
+                <p className="text-xs font-medium tracking-wide text-muted-foreground">Ledger Count</p>
+                <p className="text-3xl font-heading font-bold text-foreground">{transactions.length}</p>
               </div>
-              <div className="h-12 w-12 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400 group-hover:scale-110 transition-transform">
-                <History className="h-6 w-6" />
-              </div>
+              <History className="h-10 w-10 text-muted-foreground" strokeWidth={1.5} />
             </CardContent>
           </Card>
 
-          <Card className="border-slate-900 bg-slate-950/40 backdrop-blur shadow-xl relative overflow-hidden group">
-            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-indigo-500 to-cyan-500" />
-            <CardContent className="pt-6 flex items-center justify-between">
+          <Card className="border-border bg-card shadow-lg relative overflow-hidden group">
+            <div className="absolute bottom-0 left-0 w-12 h-0.5 bg-primary" />
+            <CardContent className="pt-5 pb-4 flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Engine Confidence</p>
-                <p className="text-3xl font-extrabold text-white">{avgConfidence.toFixed(0)}%</p>
+                <p className="text-xs font-medium tracking-wide text-muted-foreground">Engine Confidence</p>
+                <p className="text-3xl font-heading font-bold text-foreground font-mono">{avgConfidence.toFixed(0)}%</p>
               </div>
-              <div className="h-12 w-12 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform">
-                <Sparkles className="h-6 w-6" />
-              </div>
+              <FileText className="h-10 w-10 text-muted-foreground" strokeWidth={1.5} />
             </CardContent>
           </Card>
 
-          <Card className="border-slate-900 bg-slate-950/40 backdrop-blur shadow-xl relative overflow-hidden group">
-            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-cyan-500 to-emerald-500" />
-            <CardContent className="pt-6 flex items-center justify-between">
+          <Card className="border-border bg-card shadow-lg relative overflow-hidden group">
+            <CardContent className="pt-5 pb-4 flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Database Status</p>
-                <p className="text-3xl font-extrabold text-white">Active</p>
+                <p className="text-xs font-medium tracking-wide text-muted-foreground">Database Status</p>
+                <p className="text-3xl font-heading font-bold text-foreground">Active</p>
               </div>
-              <div className="h-12 w-12 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
-                <Database className="h-6 w-6" />
-              </div>
+              <Database className="h-10 w-10 text-muted-foreground" strokeWidth={1.5} />
             </CardContent>
           </Card>
         </div>
 
         {/* Dashboard Panels */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           
           {/* Parser Engine Console */}
-          <div className="lg:col-span-2 space-y-6">
-            <Card className="border-slate-900 bg-slate-950/50 backdrop-blur shadow-xl">
-              <CardHeader className="flex flex-row items-center space-x-3">
-                <div className="p-2 rounded bg-violet-600/10 border border-violet-500/20 text-violet-400">
-                  <FileText className="h-5 w-5" />
-                </div>
+          <div className="lg:col-span-2 space-y-5">
+            <Card className="border-border bg-card shadow-lg">
+              <CardHeader className="flex flex-row items-center space-x-3 pb-4">
+                <FileText className="h-5 w-5 text-muted-foreground" strokeWidth={1.5} />
                 <div>
-                  <CardTitle className="text-lg text-white font-bold">Parser Console</CardTitle>
-                  <CardDescription className="text-slate-400 text-xs">
+                  <CardTitle className="text-lg font-heading font-semibold text-foreground">Parser Console</CardTitle>
+                  <CardDescription className="text-muted-foreground text-xs mt-1">
                     Input raw bank statement text blocks to extract date, description, amounts, and balances.
                   </CardDescription>
                 </div>
@@ -257,7 +239,7 @@ export default function DashboardPage() {
                       placeholder="Paste your statement text block here..."
                       value={text}
                       onChange={(e) => setText(e.target.value)}
-                      className="min-h-36 border-slate-900 bg-slate-950/50 text-slate-100 placeholder:text-slate-600 focus-visible:ring-violet-500"
+                      className="min-h-36 border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-ring font-mono text-sm"
                     />
                   </div>
 
@@ -265,8 +247,8 @@ export default function DashboardPage() {
                     <div
                       className={`rounded-lg p-3 text-sm border flex items-start gap-2.5 ${
                         feedback.type === "success"
-                          ? "bg-emerald-500/5 text-emerald-400 border-emerald-500/20"
-                          : "bg-red-500/5 text-red-400 border-red-500/20"
+                          ? "bg-primary/10 text-primary border-primary/20"
+                          : "bg-destructive/10 text-destructive border-destructive/20"
                       }`}
                     >
                       {feedback.type === "success" ? (
@@ -280,12 +262,12 @@ export default function DashboardPage() {
 
                   <Button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold tracking-wide py-5 flex items-center justify-center gap-2 shadow-lg shadow-violet-600/10 hover:shadow-violet-600/20 transition-all duration-300"
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold tracking-wide py-5 flex items-center justify-center gap-2 transition-all duration-300"
                     disabled={loading || !text.trim()}
                   >
                     {loading ? (
                       <>
-                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
                         Analyzing Statement Patterns...
                       </>
                     ) : (
@@ -302,19 +284,17 @@ export default function DashboardPage() {
 
           {/* Test Presets Console */}
           <div>
-            <Card className="border-slate-900 bg-slate-950/50 backdrop-blur shadow-xl h-full">
-              <CardHeader className="flex flex-row items-center space-x-3">
-                <div className="p-2 rounded bg-indigo-600/10 border border-indigo-500/20 text-indigo-400">
-                  <TrendingUp className="h-5 w-5" />
-                </div>
+            <Card className="border-border bg-card shadow-lg h-full">
+              <CardHeader className="flex flex-row items-center space-x-3 pb-4">
+                <Database className="h-5 w-5 text-muted-foreground" strokeWidth={1.5} />
                 <div>
-                  <CardTitle className="text-lg text-white font-bold">Statement Presets</CardTitle>
-                  <CardDescription className="text-slate-400 text-xs">
+                  <CardTitle className="text-lg font-heading font-semibold text-foreground">Statement Presets</CardTitle>
+                  <CardDescription className="text-muted-foreground text-xs mt-1">
                     Quickly test our parser engine using standard multi-format bank statement layouts.
                   </CardDescription>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3">
                 {sampleTexts.map((sample, idx) => (
                   <button
                     key={idx}
@@ -322,9 +302,9 @@ export default function DashboardPage() {
                       setText(sample);
                       setFeedback(null);
                     }}
-                    className="w-full text-left p-3 rounded-lg border border-slate-900 bg-[#0c0f1b] hover:bg-slate-900 hover:border-slate-800/80 transition-all duration-300 text-xs font-mono text-slate-400 hover:text-slate-200 group"
+                    className="w-full text-left p-3 rounded-lg border border-border bg-background hover:bg-secondary hover:border-muted transition-all duration-300 text-xs font-mono text-muted-foreground hover:text-foreground group"
                   >
-                    <span className="block font-bold text-violet-400 mb-1.5 group-hover:text-violet-300 transition-colors">Format {idx + 1}:</span>
+                    <span className="block font-semibold text-primary mb-1.5 group-hover:text-primary/90 transition-colors">Format {idx + 1}:</span>
                     <span className="line-clamp-2">{sample}</span>
                   </button>
                 ))}
@@ -334,77 +314,77 @@ export default function DashboardPage() {
         </div>
 
         {/* Ledger Transaction History Table */}
-        <Card className="border-slate-900 bg-slate-950/50 backdrop-blur shadow-xl">
-          <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <Card className="border-border bg-card shadow-lg">
+          <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4">
             <div>
-              <CardTitle className="text-lg text-white font-bold">Ledger Transactions</CardTitle>
-              <CardDescription className="text-slate-400 text-xs">
+              <CardTitle className="text-lg font-heading font-semibold text-foreground">Ledger Transactions</CardTitle>
+              <CardDescription className="text-muted-foreground text-xs mt-1">
                 Organization-scoped real-time audit log of all statement parser output records.
               </CardDescription>
             </div>
             {transactions.length > 0 && (
-              <span className="text-xs px-3 py-1 rounded-full bg-violet-600/10 text-violet-400 border border-violet-500/20 font-medium self-start sm:self-center">
-                {transactions.length} Records Loaded
+              <span className="text-xs font-mono px-3 py-1 rounded-md bg-primary/10 text-primary border border-primary/20 font-medium self-start sm:self-center">
+                {transactions.length} Records
               </span>
             )}
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="rounded-lg border border-slate-900 overflow-hidden bg-slate-950/60">
+          <CardContent className="space-y-5">
+            <div className="rounded-lg border border-border overflow-hidden bg-background">
               <Table>
-                <TableHeader className="bg-slate-950/90 border-slate-900">
-                  <TableRow className="hover:bg-transparent border-slate-900">
-                    <TableHead className="text-slate-400 font-semibold text-xs tracking-wider uppercase py-4">Transaction Date</TableHead>
-                    <TableHead className="text-slate-400 font-semibold text-xs tracking-wider uppercase py-4">Description</TableHead>
-                    <TableHead className="text-slate-400 font-semibold text-xs tracking-wider uppercase py-4">Parsed Amount</TableHead>
-                    <TableHead className="text-slate-400 font-semibold text-xs tracking-wider uppercase py-4">Running Balance</TableHead>
-                    <TableHead className="text-slate-400 font-semibold text-xs tracking-wider uppercase py-4 text-center">Confidence</TableHead>
+                <TableHeader className="bg-secondary border-border">
+                  <TableRow className="hover:bg-transparent border-border">
+                    <TableHead className="text-muted-foreground font-medium text-xs tracking-wide py-3">Transaction Date</TableHead>
+                    <TableHead className="text-muted-foreground font-medium text-xs tracking-wide py-3">Description</TableHead>
+                    <TableHead className="text-muted-foreground font-medium text-xs tracking-wide py-3">Parsed Amount</TableHead>
+                    <TableHead className="text-muted-foreground font-medium text-xs tracking-wide py-3">Running Balance</TableHead>
+                    <TableHead className="text-muted-foreground font-medium text-xs tracking-wide py-3 text-center">Confidence</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {transactions.length === 0 ? (
                     <TableRow className="border-transparent hover:bg-transparent">
-                      <TableCell colSpan={5} className="text-center py-16 text-slate-500 text-sm">
+                      <TableCell colSpan={5} className="text-center py-16 text-muted-foreground text-sm">
                         No transaction records in this organization workspace.<br />
-                        <span className="text-xs text-slate-600">Paste bank statement text blocks in the Parser Console above to begin.</span>
+                        <span className="text-xs">Paste bank statement text blocks in the Parser Console above to begin.</span>
                       </TableCell>
                     </TableRow>
                   ) : (
                     transactions.map((tx) => {
                       const isCredit = tx.amount >= 0;
                       return (
-                        <TableRow key={tx.id} className="border-slate-900/60 hover:bg-slate-900/20 transition-colors">
-                          <TableCell className="font-mono text-xs text-slate-400 py-4">
+                        <TableRow key={tx.id} className="border-border hover:bg-secondary/50 transition-colors">
+                          <TableCell className="font-mono text-xs text-muted-foreground py-3">
                             {new Date(tx.date).toLocaleDateString(undefined, {
                               year: "numeric",
                               month: "short",
                               day: "numeric",
                             })}
                           </TableCell>
-                          <TableCell className="font-medium text-slate-200 py-4">
+                          <TableCell className="font-medium text-foreground py-3">
                             {tx.description}
                           </TableCell>
-                          <TableCell className="font-mono py-4">
+                          <TableCell className="font-mono py-3 text-sm">
                             <span
-                              className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                              className={`${
                                 isCredit 
-                                  ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" 
-                                  : "bg-rose-500/10 text-rose-400 border border-rose-500/20"
-                              }`}
+                                  ? "text-primary" 
+                                  : "text-destructive"
+                              } font-semibold`}
                             >
                               {isCredit ? "+" : ""}{tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </span>
                           </TableCell>
-                          <TableCell className="font-mono text-slate-300 py-4">
+                          <TableCell className="font-mono text-foreground py-3 text-sm">
                             {tx.balanceAfter.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </TableCell>
-                          <TableCell className="text-center py-4">
+                          <TableCell className="text-center py-3">
                             <span
-                              className={`text-xs px-2.5 py-0.5 rounded-md font-medium ${
+                              className={`text-xs font-mono px-2 py-0.5 rounded font-medium ${
                                 tx.confidence >= 0.8
-                                  ? "bg-violet-500/10 text-violet-400 border border-violet-500/20"
+                                  ? "bg-primary/10 text-primary border border-primary/20"
                                   : tx.confidence >= 0.5
-                                  ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                                  : "bg-red-500/10 text-red-400 border border-red-500/20"
+                                  ? "bg-muted text-muted-foreground border border-border"
+                                  : "bg-destructive/10 text-destructive border border-destructive/20"
                               }`}
                             >
                               {(tx.confidence * 100).toFixed(0)}%
@@ -424,11 +404,11 @@ export default function DashboardPage() {
                   onClick={() => fetchTransactions(nextCursor)}
                   disabled={fetchingTransactions}
                   variant="outline"
-                  className="border-slate-800 bg-[#0c0f1b] text-slate-300 hover:bg-slate-900 hover:text-white min-w-36 transition-all"
+                  className="border-border bg-background text-foreground hover:bg-secondary hover:text-foreground min-w-36 transition-all"
                 >
                   {fetchingTransactions ? (
                     <>
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-transparent mr-2" />
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-foreground border-t-transparent mr-2" />
                       Loading...
                     </>
                   ) : (
