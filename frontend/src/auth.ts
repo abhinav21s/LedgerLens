@@ -27,13 +27,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
 
           const data = await res.json();
-          if (data && data.user && data.session) {
+          if (data && data.user && data.token) {
             return {
               id: data.user.id,
               name: data.user.name,
               email: data.user.email,
-              token: data.session.token,
-              orgId: data.session.activeOrganizationId,
+              token: data.token,
+              orgId: data.activeOrganizationId,
             };
           }
           return null;

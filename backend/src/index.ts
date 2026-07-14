@@ -41,6 +41,19 @@ app.post("/api/auth/register", async (c) => {
       headers: c.req.raw.headers,
       asResponse: true,
     });
+
+    if (response.status === 200) {
+      const data = await response.clone().json();
+      const membership = await prisma.membership.findFirst({
+        where: { userId: data.user.id },
+      });
+
+      return c.json({
+        user: data.user,
+        token: data.token,
+        activeOrganizationId: membership?.organizationId || null,
+      });
+    }
     return response;
   } catch (err: any) {
     return c.json({ error: err.message || "Registration failed" }, 400);
@@ -59,6 +72,19 @@ app.post("/api/auth/login", async (c) => {
       headers: c.req.raw.headers,
       asResponse: true,
     });
+
+    if (response.status === 200) {
+      const data = await response.clone().json();
+      const membership = await prisma.membership.findFirst({
+        where: { userId: data.user.id },
+      });
+
+      return c.json({
+        user: data.user,
+        token: data.token,
+        activeOrganizationId: membership?.organizationId || null,
+      });
+    }
     return response;
   } catch (err: any) {
     return c.json({ error: err.message || "Login failed" }, 400);
